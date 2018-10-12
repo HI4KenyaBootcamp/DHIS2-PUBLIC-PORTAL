@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
+
+import {Bar,Line,Pie,Radar} from 'react-chartjs-2';
+import MyButton from './Button';
 import 'react-select-plus/dist/react-select-plus.css';
 
 
@@ -8,6 +11,7 @@ class Input extends Component{
     constructor(props){
         super(props);
         this.state = {
+            chartData:{},
             regions: [],
             indicators:[],
             selectedOption: null,
@@ -17,6 +21,11 @@ class Input extends Component{
         }
        
        
+    }
+    static defaultProps={
+        displayTitle:true,
+        displayLegend:true,
+        legendPosition:'right'
     }
 
       //function to handle selected values
@@ -32,23 +41,49 @@ class Input extends Component{
         this.setState({ selectedOption2 });
         console.log(selectedOption2)
         this.state.orgunit=`${selectedOption2.value}`;
+        this.state.orgunitName=`${selectedOption2.label}`;
         console.log(this.state.orgunit)
       }
       handleChange3 = (selectedOption3) => {
         this.setState({ selectedOption3 });
         console.log(selectedOption3)
         this.state.indicator=`${selectedOption3.value}`;
+        this.state.indicatorName=`${selectedOption3.label}`;
         // console.log(this.state.indicator)
       }
    
     
     componentDidMount() { 
-        
+        this. getchartData();
         this.fetchdata();
         
 
        } 
+ 
 
+    getchartData(){
+        //Ajax code goes here
+        this.setState({
+          chartData:{
+          
+              labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+              datasets: [{
+                  label: '# of Votes',
+                  data: [12, 19, 3, 5, 2, 3],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ]
+              }]
+    
+          
+          }
+        })
+      }
        
     
        fetchdata(){
@@ -107,7 +142,7 @@ class Input extends Component{
         console.log(this.state.period)
         console.log(this.state.orgunit)
         console.log(this.state.indicator)
-
+        console.log(this.state.chartData)
       console.log(this.state.selectedOption2)
 
       console.log(this.state.selectedOption)
@@ -122,21 +157,27 @@ class Input extends Component{
         // fetch('https://hiskenya.org/api/analytics?dimension=dx:'+this.state.indicator+'&dimension=ou:'+this.state.orgunit+'&dimension=pe:2015',headers)
         fetch(`https://hiskenya.org/api/analytics?dimension=dx:${this.state.indicator}&dimension=ou:${this.state.orgunit}&dimension=pe:LAST_52_WEEKS`,headers)
         .then(response =>console.log(response.json()))
-        .then(parsedJSON=>parsedJSON.headers.map(fetched=>(
-            {
-
-            data: `${fetched[0]}`,
-            year: `${fetched[2]}`
-
-        }
-    )))
+        .then(parsedJSON=>
+               
+            parsedJSON.map(object=>(
+                
+                {
+                items:`${object.metaData.items}`
+                
+               
+                
+            }
+            ))
+            
+        )
+        
         .then(regions=>this.setState({regions}))
         .catch(error=>console.log('parsed error', error))
 
 
 
 
-
+        
         const { name }=this.props;
         const { name2 }=this.props; 
         const { name3 }=this.props;
@@ -200,15 +241,7 @@ class Input extends Component{
             ]
         },
        
-        // { value: 'Days', label: 'Days' },
-        // { value: '  weeks', label: 'Weeks' },
-        // { value: 'Months', label: 'Months' },
-        // { value: 'BiMonths', label: 'BiMonths' },
-        // { value: 'Quarters', label: 'Quarters' },
-        // { value: 'Months', label: 'Months' },
-        // { value: 'Six-Months', label: 'Six-Months' },
-        // { value: 'Financial Years', label: 'Financial Years' },
-        // { value: 'Years', label: 'Years' }
+       
       ];
 
         return(
@@ -256,6 +289,119 @@ class Input extends Component{
 
                  </div>
                  </div>
+                 
+                </div>
+                
+          <div className="container-fluid display-graphs">
+          <div className="row">
+          <div className="col-lg-6">
+          <div className="card">
+          <Bar
+                data={this.state.chartData}
+                width={100}
+                height={50}
+                options={{
+                   title:{
+                       display:this.props.displayTitle,
+                       text:'ANC clients Tested HIV among New ANC Clients Coverage',
+                       fontSize:20
+
+                   },
+                   legend:{
+                       display:this.props.displayLegend,
+                       position:this.props.legendPosition
+                   }
+                }}
+                />
+                
+               
+          </div>
+          <MyButton name="Image(.png)"/>
+         <MyButton name="PDF"/>
+        
+          </div>
+          <div className="col-lg-6">
+          <div className="card">
+          <Pie
+                data={this.state.chartData}
+                width={100}
+                height={50}
+                options={{
+                   title:{
+                       display:this.props.displayTitle,
+                       text:'% ANC Issued with combined Iron&Folate',
+                       fontSize:20
+
+                   },
+                   legend:{
+                       display:this.props.displayLegend,
+                       position:this.props.legendPosition
+                   }
+                }}
+                />
+          </div>
+          
+                
+          <MyButton name="Image(.png)"/>
+        <MyButton name="PDF"/>
+          </div>
+          </div>
+          <div className="row">
+          <div className="col-lg-6">
+          <div className="card">
+          <Line
+                data={this.state.chartData}
+                width={100}
+                height={50}
+                options={{
+                   title:{
+                       display:this.props.displayTitle,
+                       text:'ANC Partners Tested among New ANC Clients Coverage',
+                       fontSize:20
+
+                   },
+                   legend:{
+                       display:this.props.displayLegend,
+                       position:this.props.legendPosition
+                   }
+                }}
+                />
+          </div>
+         
+                
+          <MyButton name="Image(.png)"/>
+        <MyButton name="PDF"/>
+          </div>
+          <div className="col-lg-6">
+          <div className="card">
+          <Radar
+                data={this.state.chartData}
+                width={100}
+                height={50}
+                options={{
+                   title:{
+                       display:this.props.displayTitle,
+                       text:'ANC Attendance New Clients',
+                       fontSize:20
+
+                   },
+                   legend:{
+                       display:this.props.displayLegend,
+                       position:this.props.legendPosition
+                   }
+                }}
+                />
+          </div>
+         
+                
+                <MyButton name="Image(.png)"/>
+                <MyButton name="PDG"/>
+                
+          </div>
+          </div>
+                
+              
+               
                 </div>
               
             </div>

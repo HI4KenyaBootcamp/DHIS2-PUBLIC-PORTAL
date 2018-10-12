@@ -29,13 +29,13 @@ class InputGroup extends Component{
 
        const headers ={
            headers:{
-               'Authorization': `Basic ${btoa('stevekahugu@gmail.com:Steve@95')}`
+            'Authorization': `Basic ${btoa('hi4kenya2018:Kenya#2018')}`
        }
        }
 
 
 
-       fetch('http://197.136.81.99:8082/test/api/organisationUnits',headers)
+       fetch('https://hiskenya.org/api/organisationUnits',headers)
        .then(response =>response.json())
        .then(parsedJSON=>parsedJSON.organisationUnits.map(organisationUnits=>(
            {

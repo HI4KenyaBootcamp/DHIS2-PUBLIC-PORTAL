@@ -1,4 +1,5 @@
 import React, {Component}  from 'react';
+import { Redirect } from 'react-router-dom'
 
 
 class LoginGroup extends Component{
@@ -31,7 +32,7 @@ class LoginGroup extends Component{
         };
 
         fetch(
-            "http://197.136.81.99:8082/test/api/organisationUnitGroupSets.json?paging=false&fields=name,organisationUnitGroups[name,organisationUnits[name]]",
+            "https://hiskenya.org/api/organisationUnitGroupSets.json?paging=false&fields=name,organisationUnitGroups[name,organisationUnits[name]]",
             headers
         )
             .then(function deal(data) {
@@ -40,7 +41,9 @@ class LoginGroup extends Component{
                 } else {
                     //console.log(data);
                     //<a href="https//:facebook.com"></a>
-                    alert("successful login");
+                    // alert("successful login");
+                    return <Redirect to='/admin' />
+                   
                 }
                 //console.log();
             })
@@ -58,12 +61,12 @@ class LoginGroup extends Component{
                 <form onSubmit={this.onLog.bind(this)}>
                     <div className="form-group">
                         <label for="exampleInputEmail1">Username</label>
-                        <input type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Username"  value={this.state.username} onChange={this.handlechange}/>
+                        <input type="text" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Username"  value={this.state.username} onChange={this.handlechange} required/>
                         <small id="emailHelp" className="form-text text-muted">Please use your DHIS2 Username and Password.</small>
                     </div>
                     <div className="form-group">
                         <label for="exampleInputPassword1">Password</label>
-                        <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password"  value={this.state.password} onChange={this.handlechangepassword}/>
+                        <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password"  value={this.state.password} onChange={this.handlechangepassword} required/>
                     </div>
                      <div className="text-center">
                      <button type="submit" value="Submit" className="btn btn-primary login-button">Login</button>

@@ -13,6 +13,7 @@ class Input extends Component{
         this.state = {
             chartData:{},
             regions: [],
+            period:['red','blue','green','yellow'],
             indicators:[],
             selectedOption: null,
             selectedOption2: null,
@@ -54,37 +55,38 @@ class Input extends Component{
    
     
     componentDidMount() { 
-        this. getchartData();
+        // this. getchartData();
         this.fetchdata();
         
 
        } 
  
 
-    getchartData(){
-        //Ajax code goes here
-        this.setState({
-          chartData:{
+    // getchartData(){
+    //     //Ajax code goes here
+    //     this.setState({
+    //       chartData:{
           
-              labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-              datasets: [{
-                  label: '# of Votes',
-                  data: [12, 19, 3, 5, 2, 3],
-                  backgroundColor: [
-                      'rgba(255, 99, 132, 0.2)',
-                      'rgba(54, 162, 235, 0.2)',
-                      'rgba(255, 206, 86, 0.2)',
-                      'rgba(75, 192, 192, 0.2)',
-                      'rgba(153, 102, 255, 0.2)',
-                      'rgba(255, 159, 64, 0.2)'
-                  ]
-              }]
+    //           labels: ['red','blue','green','yellow'],
+    //           datasets: [{
+    //               label: '# of Votes',
+    //               data: [12, 19, 3, 5, 2, 3],
+    //               backgroundColor: [
+    //                   'rgba(255, 99, 132, 0.2)',
+    //                   'rgba(54, 162, 235, 0.2)',
+    //                   'rgba(255, 206, 86, 0.2)',
+    //                   'rgba(75, 192, 192, 0.2)',
+    //                   'rgba(153, 102, 255, 0.2)',
+    //                   'rgba(255, 159, 64, 0.2)'
+    //               ]
+    //           }]
     
           
-          }
-        })
-      }
+    //       }
+    //     })
+    //   }
        
+      
     
        fetchdata(){
 
@@ -115,7 +117,7 @@ class Input extends Component{
 
 
          
-        fetch('https://hiskenya.org/api/indicators',headers)
+        fetch('https://hiskenya.org/api/26/indicators',headers)
         .then(response =>response.json())
         .then(parsedJSON=>parsedJSON.indicators.map(indicator=>(
             {
@@ -155,27 +157,47 @@ class Input extends Component{
         }
          
         // fetch('https://hiskenya.org/api/analytics?dimension=dx:'+this.state.indicator+'&dimension=ou:'+this.state.orgunit+'&dimension=pe:2015',headers)
-        fetch(`https://hiskenya.org/api/analytics?dimension=dx:${this.state.indicator}&dimension=ou:${this.state.orgunit}&dimension=pe:LAST_52_WEEKS`,headers)
-        .then(response =>console.log(response.json()))
-        .then(parsedJSON=>
-               
-            parsedJSON.map(object=>(
-                
-                {
-                items:`${object.metaData.items}`
-                
-               
-                
-            }
-            ))
+        fetch(`https://hiskenya.org/api/analytics?dimension=dx:${this.state.indicator}&dimension=ou:${this.state.orgunit}&dimension=pe:LAST_12_WEEKS`,headers)
+        .then(response =>response.json())
+        .then(parsedJson=>{
+
+            console.log(parsedJson)
+             console.log(parsedJson.metaData.dimensions.pe)
+
+             this.setState({
+
+                period:parsedJson.metaData.dimensions.pe
+
+             })
+             console.log(this.setState.period)
+             return parsedJson
+        }
+          
+       
             
         )
         
-        .then(regions=>this.setState({regions}))
         .catch(error=>console.log('parsed error', error))
 
 
-
+        const chartData={
+          
+            labels: this.state.period,
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ]
+            }]
+  
+        
+        }
 
         
         const { name }=this.props;
@@ -297,13 +319,13 @@ class Input extends Component{
           <div className="col-lg-6">
           <div className="card">
           <Bar
-                data={this.state.chartData}
+                data={chartData}
                 width={100}
                 height={50}
                 options={{
                    title:{
                        display:this.props.displayTitle,
-                       text:'ANC clients Tested HIV among New ANC Clients Coverage',
+                       text:this.state.indicatorName + '' +'in'+'-'+ '' + this.state.orgunitName,
                        fontSize:20
 
                    },
@@ -323,13 +345,13 @@ class Input extends Component{
           <div className="col-lg-6">
           <div className="card">
           <Pie
-                data={this.state.chartData}
+                data={chartData}
                 width={100}
                 height={50}
                 options={{
                    title:{
                        display:this.props.displayTitle,
-                       text:'% ANC Issued with combined Iron&Folate',
+                       text:this.state.indicatorName + '' +'in'+'-'+ '' + this.state.orgunitName,
                        fontSize:20
 
                    },
@@ -350,13 +372,13 @@ class Input extends Component{
           <div className="col-lg-6">
           <div className="card">
           <Line
-                data={this.state.chartData}
+                data={chartData}
                 width={100}
                 height={50}
                 options={{
                    title:{
                        display:this.props.displayTitle,
-                       text:'ANC Partners Tested among New ANC Clients Coverage',
+                       text:this.state.indicatorName + '' +'in'+'-'+ '' + this.state.orgunitName,
                        fontSize:20
 
                    },
@@ -375,13 +397,13 @@ class Input extends Component{
           <div className="col-lg-6">
           <div className="card">
           <Radar
-                data={this.state.chartData}
+                data={chartData}
                 width={100}
                 height={50}
                 options={{
                    title:{
                        display:this.props.displayTitle,
-                       text:'ANC Attendance New Clients',
+                       text:this.state.indicatorName + '' +'in'+'-'+ '' + this.state.orgunitName,
                        fontSize:20
 
                    },

@@ -37,7 +37,7 @@ class Navbar extends Component{
                 </li>
                 <li className="nav-item active mydrop">
 
-                 <a className="nav-link disabled" href="#">News</a>
+                 <Link to={"/Blog"} className="nav-link disabled" href="#">News</Link>
                
                </li>
                 <li className="nav-item">
